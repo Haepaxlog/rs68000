@@ -22,6 +22,12 @@ pub struct MemoryIter<'a, M: Memory + ?Sized> {
     next_address: u32,
 }
 
+impl<M: Memory + ?Sized> MemoryIter<'_, M> {
+    pub fn set_next_address(&mut self, address: u32) {
+        self.next_address = address;
+    }
+}
+
 impl<M: Memory + ?Sized> Iterator for MemoryIter<'_, M> {
     type Item = u16;
 
