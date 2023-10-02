@@ -4,8 +4,7 @@ pub trait Processor<M: Memory + ?Sized> {
     fn init(&mut self);
     fn run(&mut self);
     fn fetch(&mut self, mem_iter: &MemoryIter<'_, M>) -> u16;
-    fn decode(&mut self, ins: u16);
-    fn execute(&mut self, dec_ins: DecodedInstruction);
+    fn execute(&mut self);
 }
 
 enum CPUState {
@@ -15,7 +14,7 @@ enum CPUState {
     Halting,
 }
 
-struct CPU {
+pub struct CPU {
     pub registers: Registers,
     pub state: CPUState,
     pub memory_bus: MemoryBus<Box<[u8]>>,
@@ -26,7 +25,7 @@ struct MemoryBus<M: Memory + ?Sized> {
 }
 
 #[allow(non_snake_case)]
-struct Registers {
+pub struct Registers {
     /* Data Registers */
     D0: u32,
     D1: u32,
@@ -36,7 +35,7 @@ struct Registers {
     D5: u32,
     D6: u32,
     D7: u32,
-    /* Address s */
+    /* Address Registers */
     A0: u32,
     A1: u32,
     A2: u32,
@@ -121,7 +120,7 @@ impl<M: Memory + ?Sized> Processor<M> for CPU {
     }
     fn run(&mut self) {
         let mut ins: u16;
-        let mut dec_ins: DecodedInstruction;
+        //        let mut dec_ins: DecodedInstruction;
         let mut mem_iter = self.memory_bus.memory.iter(0);
         loop {
             match self.state {
@@ -130,9 +129,9 @@ impl<M: Memory + ?Sized> Processor<M> for CPU {
                     self.state = CPUState::Decoding;
                 }
                 CPUState::Decoding => {
-                    dec_ins = self.decode(ins);
+                    //                  dec_ins = self.decode(ins);
                 }
-                CPUState::Executing => self.execute(dec_ins),
+                CPUState::Executing => {} //self.execute(dec_ins),
                 CPUState::Halting => {}
             }
         }
@@ -143,8 +142,7 @@ impl<M: Memory + ?Sized> Processor<M> for CPU {
             None => panic!("Iterator has hit memory limit"),
         }
     }
-    fn decode(&mut self, ins: u16) {}
-    fn execute(&mut self, dec_ins: DecodedInstruction) {
+    fn execute(&mut self) {
         todo!();
     }
 }
